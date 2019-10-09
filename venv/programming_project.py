@@ -9,6 +9,7 @@ api_df=pd.read_csv("C:\\Users\Leonor.furtado\OneDrive - Accenture\\Uni\Programmi
 
 api_df.dropna(axis=1,thresh=50, inplace=True)
 
+
 #drop the indicator name,code variables as they aren't noisy
 
 api_df.drop(["Indicator Name", "Indicator Code"], axis=1,inplace=True)
@@ -19,9 +20,17 @@ country_info = pd.read_csv("C:\\Users\Leonor.furtado\OneDrive - Accenture\\Uni\P
 # left join the 2 dataframes
 combined_df= pd.merge(country_info,api_df, on='Country Code', how='left')
 
-#clear other df form memory
+#clear other df from memory
 del api_df, country_info
 
 # seperate countries and regions in 2 different dataframes
 country_df = combined_df[combined_df["Region"].notna()]
 region_df = combined_df[combined_df["Region"].isna()]
+
+#drop rows with more than
+country_df.dropna(axis=0,thresh=12, inplace=True)
+country_df= country_df.fillna(0)
+income_enc = pd.get_dummies( country_df['IncomeGroup'])
+country_df = pd.concat([country_df, income_enc], axis=1)
+country_df.drop("IncomeGroup",axis=1,inplace=True)
+
