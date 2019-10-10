@@ -20,39 +20,78 @@ def clean_data(df):
 
     return df
 
+
+# function to left join df with the income/region metadata and separate them into 2 different dfs country and region
+
+
+def separate_df(data_df, metadata_df):
+    # left join the 2 dataframes
+
+    combined_df = pd.merge(data_df, metadata_df, on='Country Code', how='left')
+
+    # seperate countries and regions in 2 different dataframes
+
+    country_df = combined_df[combined_df["Region"].notna()]
+    region_df = combined_df[combined_df["Region"].isna()]
+
+    region_df.drop(["Region", "IncomeGroup"], axis=1, inplace=True)
+
+    return country_df, region_df
+
+
+def create_dummies(df, col_name):
+    # turn column into dummies
+
+    enc = pd.get_dummies(df[col_name])
+
+    # join dummies at the end of df
+
+    df = pd.concat([df, enc], axis=1)
+
+    # drop original column from df
+
+    df.drop(col_name, axis=1, inplace=True)
+
+    return df
+
+
 #import international inbound tourist data from csv
 
 tourist_df=pd.read_csv("C:\\Users\Leonor.furtado\OneDrive - Accenture\\Uni\Programming\project\API_ST.INT.ARVL_DS2_en_csv_v2_103871.csv", skiprows=4)
 
 tourist_df = clean_data(tourist_df)
 
-#import international inbound tourist data from csv
-receipt_df =pd.read_csv("C:\\Users\Leonor.furtado\OneDrive - Accenture\\Uni\Programming\project\API_ST.INT.ARVL_DS2_en_csv_v2_103871.csv", skiprows=4)
+# import expenditure data from csv and clean data
 
+receipt_df = pd.read_csv("C:\\Users\Leonor.furtado\\OneDrive - Accenture\\Uni\Programming\project\API_ST.INT.ARVL_DS2_en_csv_v2_103871.csv", skiprows=4)
+
+receipt_df = clean_data(receipt_df)
 
 # import country region and income information
 country_info = pd.read_csv("C:\\Users\Leonor.furtado\OneDrive - Accenture\\Uni\Programming\project\Metadata_Country_API_ST.INT.ARVL_DS2_en_csv_v2_103871.csv", usecols=[0,1,2])
 
-# left join the 2 dataframes
-combined_df= pd.merge(country_info,tourist_df, on='Country Code', how='left')
+#seperate tourist df into region and country
+tourist_country_df, tourist_region_df = separate_df (tourist_df, country_info)
 
-#clear other df from memory
-del tourist_df, country_info
 
-# seperate countries and regions in 2 different dataframes
-country_df = combined_df[combined_df["Region"].notna()]
-region_df = combined_df[combined_df["Region"].isna()]
+#seperate receipt df into region and country
+receipt_country_df, receipt_region_df = separate_df (receipt_df, country_info)
 
 
 #create dummies for Income Group and remove Income Group
-income_enc = pd.get_dummies( country_df['IncomeGroup'])
-country_df = pd.concat([country_df, income_enc], axis=1)
-country_df.drop("IncomeGroup",axis=1,inplace=True)
 
-country_df.sort_values("2016",inplace=True, ascending=False)
+tourist_country_df = create_dummies(tourist_country_df,col_name ='IncomeGroup')
 
-country_df["2016"].hist(bins=20, figsize=[14,6])
+#sort region data from highest to lowest values in 2016
+
+tourist_region_df.sort_values("2016",inplace=True, ascending=False)
+receipt_region_df.sort_values("2016",inplace=True, ascending=False)
 
 
+#plot histogram?
+tourist_region_df["2016"].hist(bins=20, figsize=[14,6])
 
+
+#clear other df from memory
+del tourist_df, receipt_df
 
