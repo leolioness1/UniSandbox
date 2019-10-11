@@ -88,10 +88,20 @@ tourist_region_df.sort_values("2016",inplace=True, ascending=False)
 receipt_region_df.sort_values("2016",inplace=True, ascending=False)
 
 
-#plot histogram?
-tourist_region_df["2016"].hist(bins=20, figsize=[14,6])
+#pivot dataframe and do a bar plot for last 10 years and top 10 regions
+
+tourist_region_df.drop("Country Code", axis=1,inplace=True)
+tourist_region_df.set_index("Country Name", inplace=True)
+region_df_test=tourist_region_df.T
+region_df_test.reset_index(inplace=True)
+region_df_test=region_df_test.tail(11)
+region_cols =region_df_test.columns.values
+region_df_test.plot(x="index", y=region_cols[2:11], kind="bar")
 
 
 #clear other df from memory
+
 del tourist_df, receipt_df
+
+
 

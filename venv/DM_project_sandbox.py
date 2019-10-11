@@ -55,5 +55,4 @@ edu_values=combined_df.education_lvl.unique()
 
 # Concatenate back to the DataFrame
 combined_df = pd.concat([combined_df, edu_enc], axis=1)
-
 combined_df.dtypes
