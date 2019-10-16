@@ -104,4 +104,3 @@ region_df_test.plot(x="index", y=region_cols[2:11], kind="bar")
 del tourist_df, receipt_df
 
 
-
