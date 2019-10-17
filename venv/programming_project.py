@@ -93,10 +93,18 @@ receipt_region_df.sort_values("2016",inplace=True, ascending=False)
 tourist_region_df.drop("Country Code", axis=1,inplace=True)
 tourist_region_df.set_index("Country Name", inplace=True)
 region_df_test=tourist_region_df.T
-region_df_test.reset_index(inplace=True)
 region_df_test=region_df_test.tail(11)
 region_cols =region_df_test.columns.values
-region_df_test.plot(x="index", y=region_cols[2:11], kind="bar")
+region_df_test.iloc[2,:].plot(y=region_cols[2:11], kind="bar")
+
+region_cols =region_df_test.columns.values
+income_cols = [s for s in list(region_cols) if "income" in s]
+dividend_cols =[s for s in list(region_cols) if "dividend" in s]
+IDA_IBRD_cols =[s for s in list(region_cols) if ("IDA" in s or "IBRD" in s)]
+UN_cols =[s for s in list(region_cols) if "UN" in s]
+
+dividend_region_df=region_df_test[dividend_cols]
+
 
 
 #clear other df from memory
