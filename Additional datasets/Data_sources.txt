@@ -1,0 +1,6 @@
+https://unstats.un.org/unsd/methodology/m49/
+http://data.un.org/Default.aspx
+	http://data.un.org/Host.aspx?Content=UNdataUse
+https://datacatalog.worldbank.org/search/datasets?search_api_views_fulltext_op=AND&query=by+country&f%5B0%5D=field_license_wbddh%3A1335&f%5B2%5D=field_resources%253Afield_wbddh_resource_type%3A986&f%5B4%5D=type%3Adataset&sort_by=search_api_relevance&sort_by=search_api_relevance
+https://data.oecd.org/conversion/exchange-rates.htm
+
