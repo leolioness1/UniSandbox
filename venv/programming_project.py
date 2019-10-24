@@ -1,6 +1,8 @@
 #import packages
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
+
 
 def clean_data(df):
     
@@ -103,12 +105,85 @@ dividend_cols =[s for s in list(region_cols) if "dividend" in s]
 IDA_IBRD_cols =[s for s in list(region_cols) if ("IDA" in s or "IBRD" in s)]
 UN_cols =[s for s in list(region_cols) if "UN" in s]
 
-dividend_region_df=region_df_test[dividend_cols]
+# Read an example csv file
+# Encoding issue for special characters, see the next link:
+# https://stackoverflow.com/questions/18171739/unicodedecodeerror-when-reading-csv-file-in-pandas-with-python
+population = pd.read_csv('C:\\Users\Leonor.furtado\OneDrive - Accenture\\Uni\Programming\project\Population by country.csv', encoding="ISO-8859-1",skiprows=4)
+
+# Showing the dataframe
+population.head()
+list(population.columns)
+
+# Drop some columns from the population dataframe
+population = population.drop(['Indicator Name', 'Indicator Code'], axis=1)
+list(population.columns)
+
+# Unpivot function melt from pandas
+pop_unpivoted = population.melt(id_vars=['Country Name', 'Country Code'],
+                                var_name='Year',
+                                value_name='Population')
+pop_unpivoted
+
+
+# Function to unpivot a dataframe
+# ----------------------------------------------------------------------------
+def unpivot(df, L, cl_var_name, cl_value_name):
+    """
+    This function returns unpivoted dataframe. 
+    L: list of the static columns name.
+    var_name: new name for the new columns of unpivoted columns (first row). 
+    value_name: new name for the new columns of unpivoted values (second to last rows).
+    """
+    
+    # Check if first introduced object is a dataframe
+    if not isinstance(df, pd.DataFrame):
+        print("The first introduced argument should be a dataframe.")
+        return None
+
+    # Check if the second introduced object is a list
+    if not isinstance(L, list):
+        print("The second introduced argument should be a list.")
+        return None
+
+    # Check if the third introduced object is a string value
+    if not isinstance(cl_var_name, str):
+        print("The third introduced argument should be a string value.")
+        return None
+
+    # Check if the fourth introduced object is a string value
+    if not isinstance(cl_var_name, str):
+        print("The fourth introduced argument should be a string value.")
+        return None
+
+    # Unpivot dataframe
+    unpivoted_df = df.melt(id_vars=L,
+                           var_name=cl_var_name,
+                           value_name=cl_value_name)
+    return unpivoted_df
+
+
+# ----------------------------------------------------------------------------    
+
+# Get the documentation of the unpivot function
+unpivot.__doc__
+
+# Using the wrong argument instead of a dataframe
+unpivot([1, 2, 3], ['Country Name', 'Country Code'], 'Year', 'Population')
+
+# Using the wrong argument instead of a list on the second argument
+unpivot(population, 'Country Name', 'Year', 'Population')
+
+# Using the wrong argument instead of a list on the third argument
+unpivot(population, ['Country Name', 'Country Code'], 2, 'Population')
+
+# Using unpivot function
+unpivot_pop = unpivot(population, ['Country Name', 'Country Code'], 'Year', 'Population')
+unpivot_pop.head()
+list(unpivot_pop.columns)
+
 
 
 
 #clear other df from memory
-
 del tourist_df, receipt_df
-
 
