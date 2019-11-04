@@ -1,0 +1,29 @@
+scikit-learn: Overview of clustering methods
+	https://scikit-learn.org/stable/modules/clustering.html#spectral-clustering
+
+scikit-learn: sklearn.cluster.SpectralClustering
+	https://scikit-learn.org/stable/modules/generated/sklearn.cluster.SpectralClustering.html
+
+Theory about Spectral Clustering:
+	Video:
+	https://www.youtube.com/watch?v=zkgm0i77jQ8
+	Paper:
+	http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=7B842DD72F6FD68A3B8E024856EE39F5?doi=10.1.1.165.9323&rep=rep1&type=pdf
+
+Using Spectral Clustering (with	sklearn.cluster.SpectralClustering)
+https://www.geeksforgeeks.org/ml-spectral-clustering/
+
+Silhouettes: A graphical aid to the interpretation and validation of cluster analysis
+https://www.sciencedirect.com/science/article/pii/0377042787901257?via%3Dihub
+
+Spectral Clustering Algorithm Implemented From Scratch (without using scikit-learn):
+https://towardsdatascience.com/unsupervised-machine-learning-spectral-clustering-algorithm-implemented-from-scratch-in-python-205c87271045
+
+Examples and .py codes about Spectral Clustering (Without using scikit-learn):
+	Video:
+	https://www.youtube.com/watch?v=Z10BXWPFnas
+	Download code:
+	https://github.com/ardianumam/Machine-Learning-From-The-Scratch
+
+
+
