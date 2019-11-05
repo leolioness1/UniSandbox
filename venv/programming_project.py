@@ -2,6 +2,9 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import numpy as np
+from sklearn.neighbors import KNeighborsRegressor
+from pandas.util.testing import assert_frame_equal
 
 
 def clean_data(df):
@@ -252,7 +255,64 @@ unpivot_pop = unpivot(population, ['Country Name', 'Country Code'], 'Year', 'Pop
 unpivot_pop.head()
 list(unpivot_pop.columns)
 
+# define a function to fill in missing values in each column using kmean regressor
+def kmeans_fillna(df, X, y, y_pred):
+    # select the variable to be predicted
+    dependent = df[y]
 
+    # select the other variables to be used in the regressor for prediction and fill in their missing values with respective averages
+    # (avg fillna applied because kmeans regressor doesn't work with variables that have missing values)
+    tempavg = df[X].fillna(df.mean())
+
+    # merge the two tables together for analysis
+    reg = pd.concat([dependent, tempavg], axis=1).apply(pd.to_numeric)
+
+    # splitting the reg dataframe to incomplete table
+    # contains the rows of each Nan value of the dependent variable in reg df
+    incomplete = reg[reg[y].isna()]
+
+    # splitting the reg dataframe to complete table
+    # contains the rows of each valid value of the dependent variable in reg df
+    complete = reg[~reg.index.isin(incomplete.index)]
+
+    # setting the kmeans regressor using euclidean distances
+    regressor = KNeighborsRegressor(10, weights='distance', metric='euclidean')
+
+    # applying the regressor to the dataframe
+    fitting = regressor.fit(complete.loc[:, X], complete.loc[:, [y]])
+
+    # predicting the values in the incomplete table
+    incomplete[y_pred] = fitting.predict(incomplete.drop(columns=[y]))
+
+    # cleaning the incomplete df and getting ready to merge back to the original dataframe
+    incomplete.drop(X, axis=1, inplace=True)
+    incomplete.drop(y, axis=1, inplace=True)
+
+    # applying concatenate to the original df
+    df = pd.concat([df, incomplete], axis=1)
+
+    # fillna of dependent and predicted columns with 0, to be able to add back to the original df
+    df[[y, y_pred]] = df[[y, y_pred]].fillna(0)
+
+    # add the new values to the original column in the original df
+    df[y] = df[y] + df[y_pred]
+
+    # drop the predicted column from the original df
+    df.drop(columns=[y_pred], inplace=True)
+
+    # return the original df
+    return df
+
+data_url = "https://goo.gl/ioc2Td"
+gapminder = pd.read_csv(data_url)
+gapminder_numeric =gapminder.iloc[0:50,2:4]
+gapminder_NaN = gapminder_numeric.mask(np.random.random(gapminder_numeric.shape)<0.3)
+merged_df=pd.concat([gapminder.iloc[0:50,0:2],gapminder_NaN],axis=1)
+merged_df.columns
+filled_df=kmeans_fillna(merged_df,['gdpPercap_1952'],'gdpPercap_1957','gdpPercap_1957_2')
+assert_frame_equal(merged_df,filled_df)
+df = pd.concat([filled_df,merged_df], axis=1)
+df.to_csv('compare_result.csv')
 
 
 #clear other df from memory
